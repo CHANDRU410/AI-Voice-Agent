@@ -1,0 +1,10 @@
+flask
+twilio
+python-dotenv
+flask-cors
+pymongo
+requests
+openai-whisper
+torch
+groq
+gtts

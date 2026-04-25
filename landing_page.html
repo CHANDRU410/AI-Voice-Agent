@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Voice Course Advisor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #0f172a;
+    color: white;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 40px 20px;
+  }
+
+  .hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .hero-text { flex: 1; min-width: 280px; }
+
+  h1 {
+    font-size: 42px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  p { color: #cbd5e1; margin-bottom: 20px; }
+
+  ul { color: #cbd5e1; padding-left: 20px; line-height: 2; }
+
+  /* ── Card ── */
+  .card {
+    background: white;
+    color: #111;
+    padding: 28px;
+    border-radius: 14px;
+    width: 360px;
+    flex-shrink: 0;
+  }
+
+  .card h3 { margin: 0 0 20px; font-size: 20px; }
+
+  .card label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 4px;
+  }
+
+  .card input,
+  .card select {
+    width: 100%;
+    padding: 11px 14px;
+    margin-bottom: 14px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .card input:focus,
+  .card select:focus { border-color: #2563eb; }
+
+  .card button {
+    width: 100%;
+    padding: 13px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    font-family: inherit;
+    transition: background .2s, opacity .2s;
+  }
+
+  .card button:hover:not(:disabled) { background: #1d4ed8; }
+  .card button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* ── Status ── */
+  .status {
+    margin-top: 12px;
+    font-size: 14px;
+    min-height: 20px;
+    text-align: center;
+    font-weight: 500;
+  }
+  .status.ok    { color: #16a34a; }
+  .status.error { color: #dc2626; }
+  .status.info  { color: #2563eb; }
+
+  /* ── Features ── */
+  .features {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .feature {
+    background: #1e293b;
+    padding: 22px;
+    border-radius: 12px;
+  }
+
+  .feature h4 { margin: 0 0 8px; font-size: 16px; }
+  .feature p  { margin: 0; font-size: 14px; }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="hero">
+
+    <!-- Left: copy -->
+    <div class="hero-text">
+      <h1>Talk to an AI Advisor in Seconds</h1>
+      <p>
+        Get personalised course recommendations through a real phone call.
+        No forms. No waiting. Just pick up and talk.
+      </p>
+      <ul>
+        <li>✔ Instant AI call</li>
+        <li>✔ Multi-language — English / Tamil / Malayalam</li>
+        <li>✔ Personalised course suggestions</li>
+      </ul>
+    </div>
+
+    <!-- Right: form -->
+    <div class="card">
+      <h3>Get a Call Now</h3>
+
+      <label for="name">Your Name</label>
+      <input type="text" id="name" placeholder="e.g. Arjun Kumar" autocomplete="name" />
+
+      <label for="details">User Details</label>
+      <input type="text" id="details" placeholder="e.g. Student at XYZ" />
+
+      <label for="phone">Phone Number</label>
+      <input
+        type="tel"
+        id="phone"
+        placeholder="+91 98765 43210"
+        autocomplete="tel"
+      />
+
+      <label for="lang">Preferred Language</label>
+      <select id="lang">
+        <option value="en">English</option>
+        <option value="ta">Tamil — தமிழ்</option>
+        <option value="ml">Malayalam — മലയാളം</option>
+      </select>
+
+      <button id="callBtn" onclick="callUser()">Call Me</button>
+
+      <div class="status" id="status"></div>
+    </div>
+
+  </div>
+
+  <!-- Features -->
+  <div class="features">
+    <div class="feature">
+      <h4>Smart Conversations</h4>
+      <p>AI understands your goals and suggests the best-fit courses for you.</p>
+    </div>
+    <div class="feature">
+      <h4>Real-Time Call</h4>
+      <p>No waiting — the AI calls you instantly after you submit.</p>
+    </div>
+    <div class="feature">
+      <h4>Actionable Insights</h4>
+      <p>Your responses are analysed so our team can follow up with the right advice.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const SERVER_URL = "https://runtish-lena-reply.ngrok-free.dev";
+
+  async function callUser() {
+    const name    = document.getElementById("name").value.trim();
+    const details = document.getElementById("details").value.trim();
+    const phone   = document.getElementById("phone").value.trim();
+    const lang    = document.getElementById("lang").value;
+    const status  = document.getElementById("status");
+    const btn     = document.getElementById("callBtn");
+
+    // ── Validate ──────────────────────────────────────────
+    if (!phone) {
+      setStatus("Please enter your phone number.", "error");
+      document.getElementById("phone").focus();
+      return;
+    }
+
+    // Basic E.164-ish check — must start with + and have digits
+    if (!/^\+?[\d\s\-]{8,15}$/.test(phone)) {
+      setStatus("Enter a valid phone number with country code, e.g. +919876543210", "error");
+      return;
+    }
+
+    // ── Send request ──────────────────────────────────────
+    btn.disabled = true;
+    setStatus("Initiating your call...", "info");
+
+    try {
+      const res = await fetch(`${SERVER_URL}/call`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "69420"
+        },
+        body: JSON.stringify({ name, details, phone, lang }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setStatus("Call on its way! Pick up when your phone rings.", "ok");
+      } else {
+        setStatus("Error: " + (data.error || "Something went wrong. Please try again."), "error");
+        btn.disabled = false;
+      }
+
+    } catch (err) {
+      console.error(err);
+      setStatus("Could not reach the server. Please try again shortly.", "error");
+      btn.disabled = false;
+    }
+  }
+
+  function setStatus(msg, type) {
+    const el = document.getElementById("status");
+    el.textContent = msg;
+    el.className = "status " + (type || "");
+  }
+
+  // Allow pressing Enter in the phone field to trigger the call
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("phone").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") callUser();
+    });
+  });
+</script>
+
+</body>
+</html>

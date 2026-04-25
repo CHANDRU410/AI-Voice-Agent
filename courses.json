@@ -1,0 +1,22 @@
+{
+  "courses": [
+    {
+      "name": "Artificial Intelligence",
+      "fee": "5000",
+      "duration": "3 months",
+      "description": "Learn machine learning, deep learning, and AI fundamentals."
+    },
+    {
+      "name": "Data Science",
+      "fee": "4500",
+      "duration": "4 months",
+      "description": "Learn data analysis, Python, statistics, and machine learning."
+    },
+    {
+      "name": "Full Stack Development",
+      "fee": "4000",
+      "duration": "5 months",
+      "description": "Learn frontend, backend, databases, and web development."
+    }
+  ]
+}
